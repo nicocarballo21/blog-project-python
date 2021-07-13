@@ -1,0 +1,23 @@
+stages:
+  - quality
+
+syntax:
+  image: alpine/flake8:3.4.0
+  stage: quality
+  except:
+    - tags
+  script:
+    - flake8
+
+test_migrations:
+  image: python:3.8-buster
+  stage: quality
+  except:
+    - tags
+    - /^changelog-.*/
+  retry: 2
+  before_script:
+    - pip install pipenv
+    - pipenv install
+  script:
+    - pipenv run ./manage.py migrate
